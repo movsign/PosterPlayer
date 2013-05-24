@@ -12,15 +12,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -39,25 +35,12 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		getActionBar().hide();
-		
-		ViewPager view = (ViewPager) findViewById(R.id.viewpager);
-		view.setOnTouchListener(new OnTouchListener() {
 
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-				Intent intent;
-				float y = motionEvent.getY();
-				if (y < 50.0f) {
-					intent = new Intent(HomeActivity.this, RandomActivity.class);
-					startActivity(intent);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-
-		PagerAdapter pagerAdapter = new MyPagerAdapter();
-		view.setAdapter(pagerAdapter);
+		GridView view = (GridView) findViewById(R.id.thumbnail_grid);
+		List<Thumbnail> list = load();
+		PDFAdapter adapter = new PDFAdapter(getApplicationContext(),
+				R.layout.pdf_thumbnail, list);
+		view.setAdapter(adapter);
 	}
 
 	private class PDFAdapter extends ArrayAdapter<Thumbnail> {
@@ -82,7 +65,8 @@ public class HomeActivity extends Activity {
 			view.setImageBitmap(thumbnail.bitmap);
 			view.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Intent intent = new Intent(getApplicationContext(), ChoiceActivity.class);
+					Intent intent = new Intent(getApplicationContext(),
+							ChoiceActivity.class);
 					intent.setAction(Intent.ACTION_VIEW);
 					intent.setData(thumbnail.data);
 					startActivity(intent);
@@ -97,68 +81,36 @@ public class HomeActivity extends Activity {
 	class Thumbnail {
 		final Bitmap bitmap;
 		final Uri data;
+
 		Thumbnail(Bitmap bitmap, Uri data) {
 			this.bitmap = bitmap;
 			this.data = data;
 		}
 	}
-	private List<Thumbnail> load(int page) {
+
+	private List<Thumbnail> load() {
 		ArrayList<Thumbnail> list = new ArrayList<Thumbnail>();
-		int i = 0;
-        File dir = new File(Environment.getExternalStorageDirectory(), "Download");
-        File[] pdfs = dir.listFiles(new FilenameFilter() {
+		File dir = new File(Environment.getExternalStorageDirectory(),
+				"Download");
+		File[] pdfs = dir.listFiles(new FilenameFilter() {
 			private static final String EXTENT = ".pdf";
+
 			public boolean accept(File dir, String filename) {
 				return filename.endsWith(EXTENT);
 			}
 		});
-        
-        for (File pdf : pdfs) {
-        	if (i >= (page + 1) * 9) {
-        		break;
-        	}
-        	if (i++ < page * 9) {
-        		continue;
-        	}
 
-        	try {
-				MuPDFCore core = new MuPDFCore(getApplicationContext(), pdf.getAbsolutePath());
+		for (File pdf : pdfs) {
+
+			try {
+				MuPDFCore core = new MuPDFCore(getApplicationContext(),
+						pdf.getAbsolutePath());
 				core.countPages();
 				Bitmap bitmap = core.drawPage(0, 500, 700, 0, 0, 300, 420);
 				list.add(new Thumbnail(bitmap, Uri.fromFile(pdf)));
 			} catch (Exception e) {
 			}
-        }
+		}
 		return list;
-	}
-	
-	private class MyPagerAdapter extends PagerAdapter {
-		@Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            int[] pages = {R.layout.page1, R.layout.page2, R.layout.page3};
-            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            GridView tv = (GridView)inflater.inflate(pages[position], null);
-            List<Thumbnail> list = load(position);
-            PDFAdapter adapter = new PDFAdapter(getApplicationContext(), R.layout.pdf_thumbnail, list);
-            tv.setAdapter(adapter);
-            container.addView(tv);
-            return tv;
-        }
-
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			((ViewPager) container).removeView((View) object);
-		}
-
-		@Override
-		public int getCount() {
-			return 3;
-		}
-
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return view.equals(object);
-		}
-
 	}
 }
