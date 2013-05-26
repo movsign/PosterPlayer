@@ -18,6 +18,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -34,10 +36,10 @@ public class HomeActivity extends Activity {
 						| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		getActionBar().hide();
 
 		GridView view = (GridView) findViewById(R.id.thumbnail_grid);
 		List<Thumbnail> list = load();
+
 		PDFAdapter adapter = new PDFAdapter(getApplicationContext(),
 				R.layout.pdf_thumbnail, list);
 		view.setAdapter(adapter);
