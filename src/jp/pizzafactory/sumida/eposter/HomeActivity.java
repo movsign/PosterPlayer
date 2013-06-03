@@ -70,6 +70,7 @@ public class HomeActivity extends Activity {
 					intent.setAction(Intent.ACTION_VIEW);
 					intent.setData(thumbnail.data);
 					startActivity(intent);
+					finish();
 				}
 			});
 
