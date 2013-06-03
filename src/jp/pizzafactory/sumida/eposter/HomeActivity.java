@@ -18,8 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 
