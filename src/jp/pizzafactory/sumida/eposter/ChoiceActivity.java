@@ -2,6 +2,8 @@ package jp.pizzafactory.sumida.eposter;
 
 import java.io.InputStream;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -9,9 +11,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.artifex.mupdfdemo.MuPDFCore;
 import com.artifex.mupdfdemo.MuPDFPageAdapter;
@@ -154,8 +156,8 @@ public class ChoiceActivity extends Activity
 //		layout.setBackgroundResource(R.drawable.tiled_background);
 		//layout.setBackgroundResource(R.color.canvas);
 //		setContentView(layout);
-		ImageButton imageButton = (ImageButton) findViewById(R.id.home);
-		imageButton.setOnClickListener(new OnClickListener() {
+		ImageView imageView = (ImageView) findViewById(R.id.home);
+		imageView.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				Intent intent = new Intent(ChoiceActivity.this,
@@ -164,7 +166,6 @@ public class ChoiceActivity extends Activity
 				ChoiceActivity.this.finish();
 			}
 		});
-
 	}
 
 	public Object onRetainNonConfigurationInstance()
@@ -197,6 +198,25 @@ public class ChoiceActivity extends Activity
 		}
 
 		super.onStart();
+		ImageView ivLeft = (ImageView) findViewById(R.id.swipe_left);
+		ImageView ivRight = (ImageView) findViewById(R.id.swipe_right);
+
+		if (core != null && core.countPages() != 1) {
+			ivLeft.setVisibility(View.VISIBLE);
+			AnimatorSet setLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this,
+					R.animator.blink);
+			setLeft.setTarget(ivLeft);
+			setLeft.start();
+	
+			ivRight.setVisibility(View.VISIBLE);
+			AnimatorSet setRight = (AnimatorSet) AnimatorInflater.loadAnimator(this,
+					R.animator.blink);
+			setRight.setTarget(ivRight);
+			setRight.start();
+		} else {
+			ivLeft.setVisibility(View.INVISIBLE);
+			ivRight.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	@Override

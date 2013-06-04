@@ -69,4 +69,6 @@
     <string name="back_to_home">Back to home</string>
     <string name="image">Image</string>
     <string name="poster_thumbnail">Poster thumbnail</string>
+    <string name="swipe_to_left">Swipe to left</string>
+    <string name="swipe_to_right">Swipe to right</string>
 </resources>

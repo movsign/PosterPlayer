@@ -4,29 +4,61 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <GridView
-        android:id="@+id/thumbnail_grid"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:columnWidth="150dp"
-        android:gravity="center"
-        android:horizontalSpacing="30dp"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <com.jess.ui.TwoWayGridView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/thumbnail_grid"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:background="#000000"
+            app:cacheColorHint="#000000"
+            app:columnWidth="0dp"
+            app:gravity="left"
+            app:horizontalSpacing="10dp"
+            app:numColumns="auto_fit"
+            app:numRows="auto_fit"
+            app:rowHeight="160dp"
+            app:scrollDirectionLandscape="vertical"
+            app:scrollDirectionPortrait="horizontal"
+            app:stretchMode="none"
+            app:verticalSpacing="10dp" >
+        </com.jess.ui.TwoWayGridView>
+
+        <ImageView
+            android:id="@+id/swipe_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:alpha="70"
+            android:contentDescription="@string/swipe_to_right"
+            android:src="@drawable/swipe_left" />
+
+        <ImageView
+            android:id="@+id/swipe_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:alpha="70"
+            android:contentDescription="@string/swipe_to_left"
+            android:src="@drawable/swipe_right" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" >
+        android:gravity="center" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:contentDescription="@string/back_to_home"
-            android:src="@android:drawable/ic_dialog_dialer" />
+            android:src="@drawable/home_icon" />
     </LinearLayout>
 
 </LinearLayout>

@@ -15,10 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class RandomDream extends DreamService {
-	private static final long TIMER_PERIOD = 5000;
+	private static final long TIMER_PERIOD = 3000;
 	private ViewPager mPager;
 	private ImagePagerAdapter adapter;
 
@@ -42,8 +42,8 @@ public class RandomDream extends DreamService {
 			}
 		});
 
-		ImageButton imageButton = (ImageButton) findViewById(R.id.home);
-		imageButton.setOnClickListener(new OnClickListener() {
+		ImageView imageView = (ImageView) findViewById(R.id.home);
+		imageView.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				Intent intent = new Intent(RandomDream.this, HomeActivity.class);
