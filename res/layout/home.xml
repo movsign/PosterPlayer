@@ -35,7 +35,7 @@
             android:layout_gravity="center|left"
             android:alpha="70"
             android:contentDescription="@string/swipe_to_right"
-            android:src="@drawable/swipe_left" />
+            android:src="@drawable/swipe_s_left" />
 
         <ImageView
             android:id="@+id/swipe_right"
