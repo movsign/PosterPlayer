@@ -38,6 +38,7 @@ public class ImagePagerAdapter extends PagerAdapter {
 			this.imageView = bitmap;
 		}
 	}
+
 	/**
 	 * コンストラクタ.
 	 * 
@@ -62,14 +63,13 @@ public class ImagePagerAdapter extends PagerAdapter {
 	public void add(File id) {
 		mList.add(new Poster(id, null));
 	}
-	
+
 	public void add(Poster p) {
 		mList.add(p);
 	}
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-
 		if (position > mList.size()) {
 			return null;
 		}
@@ -108,8 +108,8 @@ public class ImagePagerAdapter extends PagerAdapter {
 			// View を生成
 			poster.imageView = new ImageView(mContext);
 			poster.imageView.setImageBitmap(bitmap);
-		}
 
+		}
 
 		// コンテナに追加
 		container.addView(poster.imageView);

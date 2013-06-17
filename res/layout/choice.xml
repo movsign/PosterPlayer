@@ -6,15 +6,15 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_height="0dp"
         android:layout_weight="1" >
 
-    <com.artifex.mupdfdemo.MuPDFReaderView
-        android:id="@+id/choiceview"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:contentDescription="@string/image" >
-    </com.artifex.mupdfdemo.MuPDFReaderView>
+        <com.artifex.mupdfdemo.MuPDFReaderView
+            android:id="@+id/choiceview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/image" >
+        </com.artifex.mupdfdemo.MuPDFReaderView>
 
         <ImageView
             android:id="@+id/swipe_left"
