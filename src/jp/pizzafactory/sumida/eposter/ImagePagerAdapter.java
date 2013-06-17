@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.support.v4.view.PagerAdapter;
@@ -28,6 +27,8 @@ public class ImagePagerAdapter extends PagerAdapter {
 
 	/** File のリスト. */
 	private ArrayList<Poster> mList;
+
+	private Display mDisplay;
 
 	private class Poster {
 		File file;
@@ -52,6 +53,10 @@ public class ImagePagerAdapter extends PagerAdapter {
 		for (File f : files) {
 			add(f);
 		}
+
+		mDisplay = ((WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
 	}
 
 	/**
@@ -78,26 +83,21 @@ public class ImagePagerAdapter extends PagerAdapter {
 		if (poster.imageView == null) {
 			Bitmap bitmap = null;
 			try {
-				Display display = ((WindowManager) mContext
-						.getSystemService(Context.WINDOW_SERVICE))
-						.getDefaultDisplay();
 				Point p = new Point();
-				display.getSize(p);
-	
-				MuPDFCore core = new MuPDFCore(mContext, poster.file.getAbsolutePath());
-				core.countPages();
-				PointF rect = core.getPageSize(0);
-				Bitmap pdfBitmap = core.drawPage(0, (int) rect.x, (int) rect.y, 0, 0, (int)rect.x, (int)rect.y);
-				core.onDestroy();
-				float scalex = (float)p.x / rect.x;
-				float scaley = (float)p.y / rect.y;
-				Matrix matrix = new Matrix();
-				if (scalex > scaley) {
-					matrix.postScale(scaley, scaley);
-				} else {
-					matrix.postScale(scalex, scalex);
+				mDisplay.getSize(p);
+
+				synchronized (this) {
+					MuPDFCore core = new MuPDFCore(mContext,
+							poster.file.getAbsolutePath());
+					core.countPages();
+					PointF rect = core.getPageSize(0);
+					if (rect.x > rect.y) {
+						p.y = (int) (p.x * rect.y / rect.x);
+					} else {
+						p.x = (int) (p.y * rect.x / rect.y);
+					}
+					bitmap = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
 				}
-				bitmap = Bitmap.createBitmap(pdfBitmap, 0, 0, (int)rect.x, (int)rect.y, matrix, false);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {

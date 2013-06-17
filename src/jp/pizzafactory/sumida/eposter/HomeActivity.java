@@ -11,7 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
@@ -136,19 +136,15 @@ public class HomeActivity extends Activity {
 				MuPDFCore core = new MuPDFCore(getApplicationContext(),
 						pdf.getAbsolutePath());
 				core.countPages();
-				PointF pf = core.getPageSize(0);
-				Bitmap bitmap = core.drawPage(0, (int) pf.x, (int) pf.y, 0, 0,
-						(int) pf.x, (int) pf.y);
-				float scalex = 228.0f / pf.x;
-				float scaley = 320.0f / pf.y;
-				Matrix matrix = new Matrix();
-				if (scalex > scaley) {
-					matrix.postScale(scaley, scaley);
+				Point p = new Point(342, 480);
+
+				PointF rect = core.getPageSize(0);
+				if (rect.x > rect.y) {
+					p.y = (int)(p.x * rect.y / rect.x);
 				} else {
-					matrix.postScale(scalex, scalex);
+					p.x = (int)(p.y * rect.x / rect.y);
 				}
-				Bitmap thumb = Bitmap.createBitmap(bitmap, 0, 0, (int) pf.x,
-						(int) pf.y, matrix, false);
+				Bitmap thumb = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
 				list.add(new Thumbnail(thumb, Uri.fromFile(pdf)));
 				core.onDestroy();
 			} catch (Exception e) {
