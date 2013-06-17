@@ -111,7 +111,17 @@ public class RandomDream extends DreamService {
 		timer.purge();
 	}
 
+	@Override
+	public void onDetachedFromWindow() {
+		mPager.setAdapter(null);
+		adapter = null;
+		super.onDetachedFromWindow();
+	}
+
 	void choicePoster() {
+		timer.cancel();
+		timer.purge();
+
 		int index = mPager.getCurrentItem();
 		File id = adapter.getId(index);
 
