@@ -54,6 +54,10 @@ public class RandomDream extends DreamService {
 				RandomDream.this.finish();
 			}
 		});
+
+		Intent intent = new Intent(RandomDream.this, ForcePortraitActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 	}
 
 	Handler handler = new Handler();
