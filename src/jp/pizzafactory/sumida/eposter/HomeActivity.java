@@ -5,29 +5,31 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.artifex.mupdfdemo.MuPDFCore;
+import com.jess.ui.TwoWayGridView;
 
 public class HomeActivity extends Activity {
+	private static List<Thumbnail> list;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -38,26 +40,38 @@ public class HomeActivity extends Activity {
 						| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		getActionBar().hide();
-		
-		ViewPager view = (ViewPager) findViewById(R.id.viewpager);
-		view.setOnTouchListener(new OnTouchListener() {
 
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-				Intent intent;
-				float y = motionEvent.getY();
-				if (y < 50.0f) {
-					intent = new Intent(HomeActivity.this, RandomActivity.class);
-					startActivity(intent);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
+		TwoWayGridView view = (TwoWayGridView) findViewById(R.id.thumbnail_grid);
+		if (list == null) {
+			list = load();
+		}
 
-		PagerAdapter pagerAdapter = new MyPagerAdapter();
-		view.setAdapter(pagerAdapter);
+		PDFAdapter adapter = new PDFAdapter(getApplicationContext(),
+				R.layout.pdf_thumbnail, list);
+		view.setAdapter(adapter);
+
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		AnimatorSet setLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this,
+				R.animator.blink);
+		ImageView ivLeft = (ImageView) findViewById(R.id.swipe_left);
+		setLeft.setTarget(ivLeft);
+		setLeft.start();
+
+		AnimatorSet setRight = (AnimatorSet) AnimatorInflater.loadAnimator(this,
+				R.animator.blink);
+		ImageView ivRight = (ImageView) findViewById(R.id.swipe_right);
+		setRight.setTarget(ivRight);
+		setRight.start();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		list = null;
 	}
 
 	private class PDFAdapter extends ArrayAdapter<Thumbnail> {
@@ -82,7 +96,8 @@ public class HomeActivity extends Activity {
 			view.setImageBitmap(thumbnail.bitmap);
 			view.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Intent intent = new Intent(getApplicationContext(), ChoiceActivity.class);
+					Intent intent = new Intent(getApplicationContext(),
+							ChoiceActivity.class);
 					intent.setAction(Intent.ACTION_VIEW);
 					intent.setData(thumbnail.data);
 					startActivity(intent);
@@ -97,68 +112,45 @@ public class HomeActivity extends Activity {
 	class Thumbnail {
 		final Bitmap bitmap;
 		final Uri data;
+
 		Thumbnail(Bitmap bitmap, Uri data) {
 			this.bitmap = bitmap;
 			this.data = data;
 		}
 	}
-	private List<Thumbnail> load(int page) {
+
+	private List<Thumbnail> load() {
 		ArrayList<Thumbnail> list = new ArrayList<Thumbnail>();
-		int i = 0;
-        File dir = new File(Environment.getExternalStorageDirectory(), "Download");
-        File[] pdfs = dir.listFiles(new FilenameFilter() {
+		File dir = new File(Environment.getExternalStorageDirectory(),
+				"Download");
+		File[] pdfs = dir.listFiles(new FilenameFilter() {
 			private static final String EXTENT = ".pdf";
+
 			public boolean accept(File dir, String filename) {
 				return filename.endsWith(EXTENT);
 			}
 		});
-        
-        for (File pdf : pdfs) {
-        	if (i >= (page + 1) * 9) {
-        		break;
-        	}
-        	if (i++ < page * 9) {
-        		continue;
-        	}
 
-        	try {
-				MuPDFCore core = new MuPDFCore(getApplicationContext(), pdf.getAbsolutePath());
+		for (File pdf : pdfs) {
+
+			try {
+				MuPDFCore core = new MuPDFCore(getApplicationContext(),
+						pdf.getAbsolutePath());
 				core.countPages();
-				Bitmap bitmap = core.drawPage(0, 500, 700, 0, 0, 300, 420);
-				list.add(new Thumbnail(bitmap, Uri.fromFile(pdf)));
+				Point p = new Point(342, 480);
+
+				PointF rect = core.getPageSize(0);
+				if (rect.x > rect.y) {
+					p.y = (int)(p.x * rect.y / rect.x);
+				} else {
+					p.x = (int)(p.y * rect.x / rect.y);
+				}
+				Bitmap thumb = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
+				list.add(new Thumbnail(thumb, Uri.fromFile(pdf)));
+				core.onDestroy();
 			} catch (Exception e) {
 			}
-        }
+		}
 		return list;
-	}
-	
-	private class MyPagerAdapter extends PagerAdapter {
-		@Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            int[] pages = {R.layout.page1, R.layout.page2, R.layout.page3};
-            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            GridView tv = (GridView)inflater.inflate(pages[position], null);
-            List<Thumbnail> list = load(position);
-            PDFAdapter adapter = new PDFAdapter(getApplicationContext(), R.layout.pdf_thumbnail, list);
-            tv.setAdapter(adapter);
-            container.addView(tv);
-            return tv;
-        }
-
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			((ViewPager) container).removeView((View) object);
-		}
-
-		@Override
-		public int getCount() {
-			return 3;
-		}
-
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return view.equals(object);
-		}
-
 	}
 }

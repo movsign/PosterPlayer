@@ -1,19 +1,21 @@
 package jp.pizzafactory.sumida.eposter;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.support.v4.view.PagerAdapter;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+
+import com.artifex.mupdfdemo.MuPDFCore;
 
 /**
  * 画像を表示する PagerAdapter.
@@ -23,22 +25,38 @@ public class ImagePagerAdapter extends PagerAdapter {
 	/** コンテキスト. */
 	private Context mContext;
 
-	/** ContentResolver. */
-	private ContentResolver mResolver;
+	/** File のリスト. */
+	private ArrayList<Poster> mList;
 
-	/** ID のリスト. */
-	private ArrayList<Long> mList;
+	private Display mDisplay;
+
+	private class Poster {
+		File file;
+		ImageView imageView;
+
+		Poster(File file, ImageView bitmap) {
+			this.file = file;
+			this.imageView = bitmap;
+		}
+	}
 
 	/**
 	 * コンストラクタ.
 	 * 
 	 * @param context
 	 *            {@link Context}
+	 * @param files
 	 */
-	public ImagePagerAdapter(Context context) {
+	public ImagePagerAdapter(Context context, File[] files) {
 		mContext = context;
-		mResolver = mContext.getContentResolver();
-		mList = new ArrayList<Long>();
+		mList = new ArrayList<Poster>();
+		for (File f : files) {
+			add(f);
+		}
+
+		mDisplay = ((WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
 	}
 
 	/**
@@ -47,32 +65,56 @@ public class ImagePagerAdapter extends PagerAdapter {
 	 * @param id
 	 *            ID
 	 */
-	public void add(Long id) {
-		mList.add(id);
+	public void add(File id) {
+		mList.add(new Poster(id, null));
+	}
+
+	public void add(Poster p) {
+		mList.add(p);
 	}
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-
+		if (position > mList.size()) {
+			return null;
+		}
 		// リストから取得
-		Long id = mList.get(position);
-		Uri uri = Uri.withAppendedPath(
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id.toString());
-		Bitmap bitmap = null;
-		try {
-			bitmap = getBitmap(uri);
-		} catch (IOException e) {
-			e.printStackTrace();
+		Poster poster = mList.get(position);
+		if (poster.imageView == null) {
+			Bitmap bitmap = null;
+			try {
+				Point p = new Point();
+				mDisplay.getSize(p);
+
+				synchronized (this) {
+					MuPDFCore core = new MuPDFCore(mContext,
+							poster.file.getAbsolutePath());
+					core.countPages();
+					PointF rect = core.getPageSize(0);
+					if (rect.x > rect.y) {
+						p.y = (int) (p.x * rect.y / rect.x);
+					} else {
+						p.x = (int) (p.y * rect.x / rect.y);
+					}
+					bitmap = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// View を生成
+			poster.imageView = new ImageView(mContext);
+			poster.imageView.setImageBitmap(bitmap);
+
 		}
 
-		// View を生成
-		ImageView imageView = new ImageView(mContext);
-		imageView.setImageBitmap(bitmap);
-
 		// コンテナに追加
-		container.addView(imageView);
+		container.addView(poster.imageView);
 
-		return imageView;
+		return poster.imageView;
 	}
 
 	@Override
@@ -81,8 +123,8 @@ public class ImagePagerAdapter extends PagerAdapter {
 		container.removeView((View) object);
 	}
 
-	public Long getId(int index) {
-		return mList.get(index);
+	public File getId(int index) {
+		return mList.get(index).file;
 	}
 
 	@Override
@@ -93,31 +135,5 @@ public class ImagePagerAdapter extends PagerAdapter {
 	@Override
 	public boolean isViewFromObject(View view, Object object) {
 		return view.equals(object);
-	}
-
-	/**
-	 * Bitmap を取得する.
-	 * 
-	 * @param imageUri
-	 *            画像の URI
-	 * @return Bitmap
-	 * @throws IOException
-	 */
-	public Bitmap getBitmap(Uri imageUri) throws IOException {
-		BitmapFactory.Options mOptions = new BitmapFactory.Options();
-		mOptions.inSampleSize = 10;
-		Bitmap resizeBitmap = null;
-
-		InputStream is = mResolver.openInputStream(imageUri);
-		resizeBitmap = BitmapFactory.decodeStream(is, null, mOptions);
-		is.close();
-
-		return resizeBitmap;
-	}
-
-	public Bitmap getBitmap(Long id) throws IOException {
-		Uri uri = Uri.withAppendedPath(
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id.toString());
-		return getBitmap(uri);
 	}
 }
