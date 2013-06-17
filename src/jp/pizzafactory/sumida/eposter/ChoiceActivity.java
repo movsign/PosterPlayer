@@ -202,11 +202,11 @@ public class ChoiceActivity extends Activity
 		ImageView ivRight = (ImageView) findViewById(R.id.swipe_right);
 
 		if (core != null && core.countPages() != 1) {
-			ivLeft.setVisibility(View.VISIBLE);
-			AnimatorSet setLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-					R.animator.blink);
-			setLeft.setTarget(ivLeft);
-			setLeft.start();
+	//		ivLeft.setVisibility(View.VISIBLE);
+	//		AnimatorSet setLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this,
+	//				R.animator.blink);
+	//		setLeft.setTarget(ivLeft);
+	//		setLeft.start();
 	
 			ivRight.setVisibility(View.VISIBLE);
 			AnimatorSet setRight = (AnimatorSet) AnimatorInflater.loadAnimator(this,

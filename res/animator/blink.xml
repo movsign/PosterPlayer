@@ -12,7 +12,7 @@
         android:propertyName="alpha"
         android:valueTo="0.0" />
     <objectAnimator
-        android:duration="200"
+        android:duration="800"
         android:propertyName="alpha"
         android:valueTo="1.0" />
     <objectAnimator
@@ -20,11 +20,7 @@
         android:propertyName="alpha"
         android:valueTo="0.0" />
     <objectAnimator
-        android:duration="200"
-        android:propertyName="alpha"
-        android:valueTo="0.0" />
-    <objectAnimator
-        android:duration="200"
+        android:duration="800"
         android:propertyName="alpha"
         android:valueTo="1.0" />
     <objectAnimator
@@ -32,7 +28,7 @@
         android:propertyName="alpha"
         android:valueTo="1.0" />
     <objectAnimator
-        android:duration="2000"
+        android:duration="7000"
         android:propertyName="alpha"
         android:valueTo="0.0" />
 
