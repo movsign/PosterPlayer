@@ -4,6 +4,11 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:gravity="center" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -18,10 +23,10 @@
             app:cacheColorHint="#000000"
             app:columnWidth="0dp"
             app:gravity="left"
-            app:horizontalSpacing="10dp"
+            app:horizontalSpacing="20dp"
             app:numColumns="auto_fit"
             app:numRows="auto_fit"
-            app:rowHeight="160dp"
+            app:rowHeight="450dp"
             app:scrollDirectionLandscape="vertical"
             app:scrollDirectionPortrait="horizontal"
             app:stretchMode="none"
@@ -44,19 +49,18 @@
             android:layout_gravity="right|center"
             android:alpha="70"
             android:contentDescription="@string/swipe_to_left"
-            android:src="@drawable/swipe_right" />
-
+            android:src="@drawable/swipe_s_right" />
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:gravity="center" >
 
         <ImageView
             android:id="@+id/home"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:contentDescription="@string/back_to_home"
             android:src="@drawable/home_icon" />
     </LinearLayout>
