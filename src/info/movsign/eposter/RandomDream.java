@@ -1,4 +1,4 @@
-package jp.pizzafactory.sumida.eposter;
+package info.movsign.eposter;
 
 import java.io.File;
 import java.io.FilenameFilter;

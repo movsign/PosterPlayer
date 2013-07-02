@@ -1,9 +1,10 @@
 package com.artifex.mupdfdemo;
 
+import info.movsign.eposter.R;
+
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import jp.pizzafactory.sumida.eposter.R;
 
 import android.content.Context;
 import android.graphics.Point;

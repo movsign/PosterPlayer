@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import jp.pizzafactory.sumida.eposter.R;
+import info.movsign.eposter.R;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;

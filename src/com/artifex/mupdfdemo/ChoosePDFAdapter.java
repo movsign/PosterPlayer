@@ -2,7 +2,7 @@ package com.artifex.mupdfdemo;
 
 import java.util.LinkedList;
 
-import jp.pizzafactory.sumida.eposter.R;
+import info.movsign.eposter.R;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;

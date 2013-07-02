@@ -1,8 +1,9 @@
 package com.artifex.mupdfdemo;
 
+import info.movsign.eposter.R;
+
 import java.util.ArrayList;
 
-import jp.pizzafactory.sumida.eposter.R;
 
 import android.app.AlertDialog;
 import android.content.ClipData;

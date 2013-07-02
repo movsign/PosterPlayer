@@ -1,6 +1,6 @@
 package com.artifex.mupdfdemo;
 
-import jp.pizzafactory.sumida.eposter.R;
+import info.movsign.eposter.R;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
