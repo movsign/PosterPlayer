@@ -55,13 +55,55 @@ public class RandomDream extends DreamService {
 			}
 		});
 
-		Intent intent = new Intent(RandomDream.this, ForcePortraitActivity.class);
+		Intent intent = new Intent(RandomDream.this,
+				ForcePortraitActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
 
-	Handler handler = new Handler();
-	Timer timer;
+	private Timer timer;
+	private TimerTask randomTask;
+
+	class RandomTask extends TimerTask {
+		final Handler handler = new Handler();
+		final int[] hoursTable = new int[] { R.string.enable0,
+				R.string.enable1, R.string.enable2, R.string.enable3,
+				R.string.enable4, R.string.enable5, R.string.enable6,
+				R.string.enable7, R.string.enable8, R.string.enable9,
+				R.string.enable10, R.string.enable11, R.string.enable12,
+				R.string.enable13, R.string.enable14, R.string.enable15,
+				R.string.enable16, R.string.enable17, R.string.enable18,
+				R.string.enable19, R.string.enable20, R.string.enable21,
+				R.string.enable22, R.string.enable23 };
+		final SharedPreferences sp;
+
+		RandomTask(SharedPreferences sharedPreferences) {
+			sp = sharedPreferences;
+		}
+
+		@Override
+		public void run() {
+			handler.post(new Runnable() {
+				public void run() {
+					Calendar calendar = Calendar.getInstance();
+					String idString = getString(hoursTable[calendar
+							.get(Calendar.HOUR_OF_DAY)]);
+					int visibility = sp.getBoolean(idString, true) ? View.VISIBLE
+							: View.INVISIBLE;
+					try {
+						findViewById(R.id.viewpager).setVisibility(visibility);
+						findViewById(R.id.home).setVisibility(visibility);
+					} catch (NullPointerException e) {
+						return;
+					}
+					if (visibility == View.VISIBLE) {
+						mPager.setCurrentItem(mPager.getCurrentItem()
+								+ (int) (Math.random() * 7) - 3);
+					}
+				}
+			});
+		}
+	};
 
 	@Override
 	public void onDreamingStarted() {
@@ -72,36 +114,10 @@ public class RandomDream extends DreamService {
 
 		int timerSpan = Integer.parseInt(sp.getString("span", "5000"));
 		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			int[] hoursTable = new int[] { R.string.enable0, R.string.enable1,
-					R.string.enable2, R.string.enable3, R.string.enable4,
-					R.string.enable5, R.string.enable6, R.string.enable7,
-					R.string.enable8, R.string.enable9, R.string.enable10,
-					R.string.enable11, R.string.enable12, R.string.enable13,
-					R.string.enable14, R.string.enable15, R.string.enable16,
-					R.string.enable17, R.string.enable18, R.string.enable19,
-					R.string.enable20, R.string.enable21, R.string.enable22,
-					R.string.enable23 };
+		randomTask = new RandomTask(sp);
 
-			@Override
-			public void run() {
-				handler.post(new Runnable() {
-					public void run() {
-						Calendar calendar = Calendar.getInstance();
-						String idString = getString(hoursTable[calendar
-								.get(Calendar.HOUR_OF_DAY)]);
-						int visibility = sp.getBoolean(idString, true) ? View.VISIBLE
-								: View.INVISIBLE;
-						findViewById(R.id.viewpager).setVisibility(visibility);
-						findViewById(R.id.home).setVisibility(visibility);
-						if (visibility == View.VISIBLE) {
-							mPager.setCurrentItem(mPager.getCurrentItem()
-									+ (int) (Math.random() * 7) - 3);
-						}
-					}
-				});
-			}
-		}, timerSpan, timerSpan);
+		randomTask.run();
+		timer.schedule(randomTask, timerSpan, timerSpan);
 	}
 
 	@Override
