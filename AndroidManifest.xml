@@ -14,7 +14,7 @@
         android:label="@string/app_name" >
         <activity
             android:name=".HomeActivity"
-            android:label="一覧表示"
+            android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
