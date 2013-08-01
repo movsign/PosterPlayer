@@ -4,26 +4,50 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.artifex.mupdfdemo.MuPDFReaderView
-        android:id="@+id/choiceview"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:contentDescription="@string/image" >
-    </com.artifex.mupdfdemo.MuPDFReaderView>
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <com.artifex.mupdfdemo.MuPDFReaderView
+            android:id="@+id/choiceview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/image" >
+        </com.artifex.mupdfdemo.MuPDFReaderView>
+
+        <ImageView
+            android:id="@+id/swipe_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:alpha="70"
+            android:contentDescription="@string/swipe_to_right"
+            android:src="@drawable/swipe_s_left"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/swipe_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:alpha="70"
+            android:contentDescription="@string/swipe_to_left"
+            android:src="@drawable/swipe_s_right"
+            android:visibility="invisible" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" >
+        android:layout_height="150dp"
+        android:gravity="center" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/home"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="150dp"
             android:contentDescription="@string/back_to_home"
-            android:src="@android:drawable/ic_dialog_dialer" />
+            android:src="@drawable/home_icon" />
     </LinearLayout>
 
 </LinearLayout>

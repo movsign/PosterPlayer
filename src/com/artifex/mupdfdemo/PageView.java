@@ -1,9 +1,10 @@
 package com.artifex.mupdfdemo;
 
+import info.movsign.eposter.R;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import jp.pizzafactory.sumida.eposter.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;

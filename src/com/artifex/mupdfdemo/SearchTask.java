@@ -1,6 +1,6 @@
 package com.artifex.mupdfdemo;
 
-import jp.pizzafactory.sumida.eposter.R;
+import info.movsign.eposter.R;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;

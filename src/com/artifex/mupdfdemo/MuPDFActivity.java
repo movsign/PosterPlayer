@@ -3,7 +3,7 @@ package com.artifex.mupdfdemo;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
 
-import jp.pizzafactory.sumida.eposter.R;
+import info.movsign.eposter.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -1,9 +1,10 @@
 package com.artifex.mupdfdemo;
 
+import info.movsign.eposter.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import jp.pizzafactory.sumida.eposter.R;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
