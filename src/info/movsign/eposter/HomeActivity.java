@@ -136,7 +136,7 @@ public class HomeActivity extends Activity {
 				MuPDFCore core = new MuPDFCore(getApplicationContext(),
 						pdf.getAbsolutePath());
 				core.countPages();
-				Point p = new Point(342, 480);
+				Point p = new Point(243, 340);
 
 				PointF rect = core.getPageSize(0);
 				if (rect.x > rect.y) {
