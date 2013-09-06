@@ -16,6 +16,7 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,14 @@ import com.artifex.mupdfdemo.MuPDFCore;
 import com.jess.ui.TwoWayGridView;
 
 public class HomeActivity extends Activity {
+	public class PosterMetrics {
+		int width;
+		int height;
+	}
+
 	private static List<Thumbnail> list;
+	private DisplayMetrics metrics;
+	private PosterMetrics posterMetrics = new PosterMetrics();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -40,7 +48,23 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
+		metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		int width = metrics.widthPixels;
+		posterMetrics.width = width * 3 / 10; /* means (w / 3) * 0.9 */
+		int posterWidthSpacing = width / 30;
+		int height = metrics.heightPixels;
+		posterMetrics.height = height * 21 / 80; /* means ((h * 7 / 8) / 3) * 0.9 */
+		int posterHeightSpacing = height * 7 / 240; /*
+													 * means ((h * 7 / 8) / 3) *
+													 * 0.1
+													 */
+		System.out.println(metrics.heightPixels);
 		TwoWayGridView view = (TwoWayGridView) findViewById(R.id.thumbnail_grid);
+		view.setHorizontalSpacing(posterWidthSpacing);
+		view.setVerticalSpacing(posterHeightSpacing);
+		view.setColumnWidth(posterMetrics.width);
+		view.setRowHeight(posterMetrics.height);
 		if (list == null) {
 			list = load();
 		}
@@ -60,8 +84,8 @@ public class HomeActivity extends Activity {
 		setLeft.setTarget(ivLeft);
 		setLeft.start();
 
-		AnimatorSet setRight = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-				R.animator.blink);
+		AnimatorSet setRight = (AnimatorSet) AnimatorInflater.loadAnimator(
+				this, R.animator.blink);
 		ImageView ivRight = (ImageView) findViewById(R.id.swipe_right);
 		setRight.setTarget(ivRight);
 		setRight.start();
@@ -137,12 +161,13 @@ public class HomeActivity extends Activity {
 						pdf.getAbsolutePath());
 				core.countPages();
 				Point p = new Point(243, 340);
-
+				System.out.println(posterMetrics.width + " "
+						+ posterMetrics.height);
 				PointF rect = core.getPageSize(0);
-				if (rect.x > rect.y) {
-					p.y = (int)(p.x * rect.y / rect.x);
-				} else {
-					p.x = (int)(p.y * rect.x / rect.y);
+				if ((double) rect.y / (double) rect.x < 1.4) {
+					p.y = (int) (p.x * rect.y / rect.x);
+				} else if ((double) rect.y / (double) rect.x > 1.4) {
+					p.x = (int) (p.y * rect.x / rect.y);
 				}
 				Bitmap thumb = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
 				list.add(new Thumbnail(thumb, Uri.fromFile(pdf)));
