@@ -65,6 +65,7 @@ public class HomeActivity extends Activity {
 		view.setVerticalSpacing(posterHeightSpacing);
 		view.setColumnWidth(posterMetrics.width);
 		view.setRowHeight(posterMetrics.height);
+
 		if (list == null) {
 			list = load();
 		}
@@ -160,14 +161,10 @@ public class HomeActivity extends Activity {
 				MuPDFCore core = new MuPDFCore(getApplicationContext(),
 						pdf.getAbsolutePath());
 				core.countPages();
-				Point p = new Point(243, 340);
-				System.out.println(posterMetrics.width + " "
-						+ posterMetrics.height);
+				Point p = new Point(posterMetrics.width * 2 / 3, posterMetrics.height * 2 / 3);
 				PointF rect = core.getPageSize(0);
-				if ((double) rect.y / (double) rect.x < 1.4) {
+				if (rect.y / rect.x < 1.2) {
 					p.y = (int) (p.x * rect.y / rect.x);
-				} else if ((double) rect.y / (double) rect.x > 1.4) {
-					p.x = (int) (p.y * rect.x / rect.y);
 				}
 				Bitmap thumb = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
 				list.add(new Thumbnail(thumb, Uri.fromFile(pdf)));
