@@ -16,16 +16,12 @@
             android:layout_height="fill_parent"
             android:background="#000000"
             app:cacheColorHint="#000000"
-            app:columnWidth="0dp"
             app:gravity="left"
-            app:horizontalSpacing="20dp"
             app:numColumns="auto_fit"
             app:numRows="auto_fit"
-            app:rowHeight="450dp"
             app:scrollDirectionLandscape="vertical"
             app:scrollDirectionPortrait="horizontal"
-            app:stretchMode="none"
-            app:verticalSpacing="10dp" >
+            app:stretchMode="columnWidth" >
         </com.jess.ui.TwoWayGridView>
 
         <ImageView
