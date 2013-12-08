@@ -175,7 +175,7 @@ public class HomeActivity extends Activity {
 				MuPDFCore core = new MuPDFCore(getApplicationContext(),
 						fileName);
 				core.countPages();
-				Point p = new Point(posterMetrics.width * 2 / 3, posterMetrics.height * 2 / 3);
+				Point p = new Point(posterMetrics.width, posterMetrics.height);
 				PointF rect = core.getPageSize(0);
 				if (rect.y / rect.x < 1.2) {
 					p.y = (int) (p.x * rect.y / rect.x);
