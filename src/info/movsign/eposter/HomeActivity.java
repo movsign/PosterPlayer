@@ -1,27 +1,29 @@
 package info.movsign.eposter;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
@@ -143,31 +145,43 @@ public class HomeActivity extends Activity {
 		}
 	}
 
-	private List<Thumbnail> load() {
-		ArrayList<Thumbnail> list = new ArrayList<Thumbnail>();
-		File dir = new File(Environment.getExternalStorageDirectory(),
-				"Download");
-		File[] pdfs = dir.listFiles(new FilenameFilter() {
-			private static final String EXTENT = ".pdf";
+	private Cursor getPdfCursor() {
+		ContentResolver cr = getContentResolver();
+		Uri uri = MediaStore.Files.getContentUri("external");
 
-			public boolean accept(File dir, String filename) {
-				return filename.endsWith(EXTENT);
-			}
-		});
+		// every column, although that is huge waste, you probably need
+		// BaseColumns.DATA (the path) only.
+		String[] projection = { MediaStore.Files.FileColumns.DATA };
+		String sortOrder = null; // unordered
 
-		for (File pdf : pdfs) {
+		String selectionMimeType = MediaStore.Files.FileColumns.MIME_TYPE
+				+ "=?";
+		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+				"pdf");
+		String[] selectionArgsPdf = new String[] { mimeType };
+		Cursor allPdfFiles = cr.query(uri, projection, selectionMimeType,
+				selectionArgsPdf, sortOrder);
+		allPdfFiles.moveToFirst();
+		return allPdfFiles;
+	}
+
+	private List<HomeActivity.Thumbnail> load() {
+		list = new ArrayList<HomeActivity.Thumbnail>();
+		Cursor allPdfFiles = getPdfCursor();
+		while (allPdfFiles.moveToNext()) {
+			String fileName = allPdfFiles.getString(0);
 
 			try {
 				MuPDFCore core = new MuPDFCore(getApplicationContext(),
-						pdf.getAbsolutePath());
+						fileName);
 				core.countPages();
-				Point p = new Point(posterMetrics.width * 2 / 3, posterMetrics.height * 2 / 3);
+				Point p = new Point(posterMetrics.width, posterMetrics.height);
 				PointF rect = core.getPageSize(0);
 				if (rect.y / rect.x < 1.2) {
 					p.y = (int) (p.x * rect.y / rect.x);
 				}
 				Bitmap thumb = core.drawPage(0, p.x, p.y, 0, 0, p.x, p.y);
-				list.add(new Thumbnail(thumb, Uri.fromFile(pdf)));
+				list.add(new Thumbnail(thumb, Uri.fromFile(new File(fileName))));
 				core.onDestroy();
 			} catch (Exception e) {
 			}
