@@ -74,7 +74,7 @@ public class TouchCountProvider extends ContentProvider {
 		public void onCreate(SQLiteDatabase db) {
 	          db.execSQL("CREATE TABLE " + table + " ("
 	                    + BaseColumns._ID + " INTEGER PRIMARY KEY,"
-	                    + "filename TEXT,"
+	                    + "uri TEXT,"
 	                    + "datetime TEXT"
 	                    + ");");			
 		}
