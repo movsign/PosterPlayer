@@ -1,3 +1,3 @@
 [submodule "two-way-gridview"]
 	path = two-way-gridview
-	url = git@github.com:movsign/two-way-gridview.git
+	url = https://github.com/movsign/two-way-gridview.git
