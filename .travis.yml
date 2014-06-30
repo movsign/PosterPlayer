@@ -1,0 +1,19 @@
+language: android
+before_install:
+- rm -f local.properties
+- cp .project .classpath two-way-gridview/lib/
+- "$ANDROID_HOME/tools/android update project --path two-way-gridview/lib/ -t android-17"
+- "$ANDROID_HOME/tools/android update project --path ./ -n PosterPlayer -t android-17
+  -s"
+script:
+- ant release
+deploy:
+  provider: releases
+  api_key:
+    secure: f0gXVN3OD9xN/CGtEypf9nHKL/cY58A4UylOTjqS5XdHRQNUREpEYykqP9JxuZH067DaWvH+/Sq5uB0fBMsqSEVmyV6ShaB18X8g681vLMuBsRGUnS/KRBxWhQ8GHSG8aDlf/KEuK6J69HAug6nPaZr5Hf/KfnuEy7OnIlOyNF0=
+  file: bin/PosterPlayer-release.apk
+  skip_cleanup: true
+  on:
+    repo: movsign/PosterPlayer
+    tags: true
+    all_branches: true
