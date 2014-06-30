@@ -189,6 +189,7 @@ public class HomeActivity extends Activity {
 				list.add(new Thumbnail(thumb, Uri.fromFile(new File(fileName))));
 				core.onDestroy();
 			} catch (Exception e) {
+				Log.e("PosterPlayer", "Can't set PDF", e);
 			}
 		}
 		return list;
