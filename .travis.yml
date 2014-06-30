@@ -5,8 +5,10 @@ before_install:
 - "$ANDROID_HOME/tools/android update project --path two-way-gridview/lib/ -t android-17"
 - "$ANDROID_HOME/tools/android update project --path ./ -n PosterPlayer -t android-17
   -s"
+- openssl aes-256-cbc -k "$ENCKEY" -in signkit.tgz.enc -d -a -out signkit.tgz
+- tar xzf signkit.tgz
 script:
-- ant release
+- ant release -propertyfile $(pwd)/monami-ya-android.properties
 deploy:
   provider: releases
   api_key:
@@ -17,3 +19,6 @@ deploy:
     repo: movsign/PosterPlayer
     tags: true
     all_branches: true
+env:
+  global:
+    secure: NQ0FHccSsgrFpPw8i6QZp7aKZplqm1PEVY6RE0l0OMA1JmB2177Ozil2Hf5ZefnY4xNYnMZexXgiCdN30nYYk7QkZ/I6O7fGb18zK7W7RMmhG4fbkqPyuE8ODolD8nhTXGjdVZCoOq22SAq/L19otaUGQuDa/kByxfucTuIZQaY=
